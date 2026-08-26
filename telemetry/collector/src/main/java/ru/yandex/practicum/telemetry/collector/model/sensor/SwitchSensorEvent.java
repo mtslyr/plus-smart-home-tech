@@ -14,5 +14,9 @@ import lombok.experimental.FieldDefaults;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class SwitchSensorEvent extends SensorEvent {
     @NotNull Boolean state;
-    SensorEventType eventType = SensorEventType.SWITCH_SENSOR_EVENT;
+
+    @Override
+    public SensorEventType getType() {
+        return SensorEventType.SWITCH_SENSOR_EVENT;
+    }
 }

@@ -15,5 +15,9 @@ import lombok.experimental.FieldDefaults;
 public class TemperatureSensorEvent extends SensorEvent {
     @NotNull Integer temperatureC;
     @NotNull Integer temperatureF;
-    SensorEventType eventType = SensorEventType.TEMPERATURE_SENSOR_EVENT;
+
+    @Override
+    public SensorEventType getType() {
+        return SensorEventType.TEMPERATURE_SENSOR_EVENT;
+    }
 }

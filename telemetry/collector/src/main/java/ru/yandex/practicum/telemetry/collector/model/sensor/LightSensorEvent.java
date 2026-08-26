@@ -13,7 +13,12 @@ import lombok.experimental.FieldDefaults;
 @NotNull
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class LightSensorEvent extends SensorEvent {
-    Integer linkQuality;
-    Integer luminosity;
-    SensorEventType eventType = SensorEventType.LIGHT_SENSOR_EVENT;
+    @NotNull Integer linkQuality;
+    @NotNull Integer luminosity;
+
+
+    @Override
+    public SensorEventType getType() {
+        return SensorEventType.LIGHT_SENSOR_EVENT;
+    }
 }

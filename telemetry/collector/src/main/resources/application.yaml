@@ -1,0 +1,9 @@
+spring:
+  kafka:
+      bootstrap-servers: localhost:9092
+      topic:
+        hub-events: telemetry.hubs.v1
+        sensor-events: telemetry.sensors.v1
+      producer:
+          key-serializer: org.apache.kafka.common.serialization.StringSerializer
+          value-serializer: ru.yandex.practicum.telemetry.collector.kafka.KafkaAvroSerializer

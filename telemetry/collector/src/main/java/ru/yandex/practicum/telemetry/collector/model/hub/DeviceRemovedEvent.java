@@ -15,5 +15,10 @@ import lombok.experimental.FieldDefaults;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class DeviceRemovedEvent extends HubEvent {
     @NotBlank String id;
-    HubEventType eventType = HubEventType.DEVICE_REMOVED;
+
+
+    @Override
+    public HubEventType getType() {
+        return HubEventType.DEVICE_REMOVED;
+    }
 }

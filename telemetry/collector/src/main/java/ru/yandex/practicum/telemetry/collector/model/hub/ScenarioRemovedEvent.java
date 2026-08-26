@@ -15,5 +15,9 @@ import lombok.experimental.FieldDefaults;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class ScenarioRemovedEvent extends HubEvent {
     @NotBlank String name;
-    HubEventType eventType = HubEventType.SCENARIO_REMOVED;
+
+    @Override
+    public HubEventType getType() {
+        return HubEventType.SCENARIO_REMOVED;
+    }
 }

@@ -16,5 +16,9 @@ import lombok.experimental.FieldDefaults;
 public class DeviceAddedEvent extends HubEvent {
     @NotBlank String id;
     @NotNull DeviceType deviceType;
-    HubEventType eventType = HubEventType.DEVICE_ADDED;
+
+    @Override
+    public HubEventType getType() {
+        return HubEventType.DEVICE_ADDED;
+    }
 }
