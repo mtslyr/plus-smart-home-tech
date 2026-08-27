@@ -6,4 +6,4 @@ spring:
         sensor-events: telemetry.sensors.v1
       producer:
           key-serializer: org.apache.kafka.common.serialization.StringSerializer
-          value-serializer: ru.yandex.practicum.telemetry.collector.kafka.KafkaAvroSerializer
+          value-serializer: ru.yandex.parcticum.telemetry.serialization.KafkaAvroSerializer

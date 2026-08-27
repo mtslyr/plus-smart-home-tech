@@ -9,6 +9,7 @@ import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.kafka.clients.producer.RecordMetadata;
 import org.apache.kafka.common.KafkaException;
 import org.springframework.stereotype.Component;
+import ru.yandex.practicum.telemetry.collector.configuration.KafkaConfigurationProperties;
 
 import java.time.Duration;
 import java.time.Instant;
@@ -17,14 +18,10 @@ import java.util.concurrent.Future;
 
 @Slf4j
 @Component
+@RequiredArgsConstructor
 public class KafkaEventProducer implements AutoCloseable {
-    private final KafkaConfig config;
+    private final KafkaConfigurationProperties config;
     private final KafkaProducer<String, SpecificRecordBase> producer;
-
-    public KafkaEventProducer(KafkaConfig config) {
-        this.config = config;
-        this.producer = new KafkaProducer<>(config.getProducerConfig());
-    }
 
     public void send(String topic, SpecificRecordBase event, String hubId, Instant timestamp) {
         ProducerRecord<String, SpecificRecordBase> record = new ProducerRecord<>(
@@ -52,9 +49,9 @@ public class KafkaEventProducer implements AutoCloseable {
         }
     }
 
-    public String hubEventTopic() {return config.getHubEventTopic();}
+    public String hubEventTopic() {return config.getTopic().getHubEvents();}
 
-    public String sensorEventTopic() {return config.getSensorEventTopic();}
+    public String sensorEventTopic() {return config.getTopic().getSensorEvents();}
 
     @Override
     public void close() {
