@@ -5,6 +5,7 @@ import io.grpc.Status;
 import io.grpc.StatusRuntimeException;
 import io.grpc.stub.StreamObserver;
 import lombok.extern.slf4j.Slf4j;
+import net.devh.boot.grpc.server.service.GrpcService;
 import org.springframework.http.MediaType;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -21,7 +22,7 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Slf4j
-@RestController
+@GrpcService
 @Validated
 @RequestMapping(value = "/events", consumes = MediaType.APPLICATION_JSON_VALUE)
 public class EventController extends CollectorControllerGrpc.CollectorControllerImplBase {
@@ -39,6 +40,7 @@ public class EventController extends CollectorControllerGrpc.CollectorController
     @Override
     public void collectSensorEvent(SensorEventProto request, StreamObserver<Empty> responseObserver) {
         try {
+            log.info("Received message: {}", request.toString());
             if (sensorEventHandlers.containsKey(request.getPayloadCase())) {
                 sensorEventHandlers.get(request.getPayloadCase()).handle(request);
             } else {
@@ -56,6 +58,7 @@ public class EventController extends CollectorControllerGrpc.CollectorController
     @Override
     public void collectHubEvent(HubEventProto request, StreamObserver<Empty> responseObserver) {
         try {
+            log.info("Received message: {}", request.toString());
             if (hubEventHandlers.containsKey(request.getPayloadCase())) {
                 hubEventHandlers.get(request.getPayloadCase()).handle(request);
             } else {

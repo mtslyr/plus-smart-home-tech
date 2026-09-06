@@ -27,11 +27,16 @@ public abstract class BaseSensorEventHandler<T extends SpecificRecordBase> imple
 
         T eventAvro = mapToAvro(event);
 
+        long timestampMillis = Instant.ofEpochSecond(
+                event.getTimestamp().getSeconds(),
+                event.getTimestamp().getNanos()
+        ).toEpochMilli();
+
         ru.yandex.practicum.kafka.telemetry.event.SensorEventAvro avro =
                 ru.yandex.practicum.kafka.telemetry.event.SensorEventAvro.newBuilder()
                         .setHubId(event.getHubId())
                         .setId(event.getId())
-                        .setTimestamp(event.getTimestamp().getSeconds())
+                        .setTimestamp(timestampMillis)
                         .setPayload(eventAvro)
                         .build();
 
@@ -39,6 +44,6 @@ public abstract class BaseSensorEventHandler<T extends SpecificRecordBase> imple
                 producer.sensorEventTopic(),
                 avro,
                 event.getHubId(),
-                Instant.ofEpochSecond(event.getTimestamp().getSeconds()));
+                Instant.ofEpochMilli(timestampMillis));
     }
 }

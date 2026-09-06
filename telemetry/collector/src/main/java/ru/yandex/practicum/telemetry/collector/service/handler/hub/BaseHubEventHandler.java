@@ -29,10 +29,15 @@ public abstract class BaseHubEventHandler<T extends SpecificRecordBase> implemen
 
         T eventAvro = mapToAvro(event);
 
+        long timestampMillis = Instant.ofEpochSecond(
+                event.getTimestamp().getSeconds(),
+                event.getTimestamp().getNanos()
+        ).toEpochMilli();
+
         ru.yandex.practicum.kafka.telemetry.event.HubEventAvro avro =
                 ru.yandex.practicum.kafka.telemetry.event.HubEventAvro.newBuilder()
                         .setHubId(event.getHubId())
-                        .setTimestamp(event.getTimestamp().getSeconds())
+                        .setTimestamp(timestampMillis)
                         .setPayload(eventAvro)
                         .build();
 
@@ -40,6 +45,6 @@ public abstract class BaseHubEventHandler<T extends SpecificRecordBase> implemen
                 producer.hubEventTopic(),
                 avro,
                 event.getHubId(),
-                Instant.ofEpochSecond(event.getTimestamp().getSeconds()));
+                Instant.ofEpochMilli(timestampMillis));
     }
 }

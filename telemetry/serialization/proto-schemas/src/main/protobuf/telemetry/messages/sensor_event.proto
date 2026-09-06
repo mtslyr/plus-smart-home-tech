@@ -9,8 +9,8 @@ option java_package = "ru.yandex.practicum.grpc.telemetry.event";
 
 message SensorEventProto {
   string id = 1;
-  string hubId = 2;
-  google.protobuf.Timestamp timestamp = 3;
+  google.protobuf.Timestamp timestamp = 2;
+  string hub_id= 3;
   oneof payload {
     MotionSensorProto motion_sensor_event = 4;
     TemperatureSensorProto temperature_sensor_event = 5;

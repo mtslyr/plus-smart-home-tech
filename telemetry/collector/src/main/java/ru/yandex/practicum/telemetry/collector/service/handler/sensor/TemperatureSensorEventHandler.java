@@ -15,7 +15,7 @@ public class TemperatureSensorEventHandler extends BaseSensorEventHandler<Temper
 
     @Override
     protected TemperatureSensorEventAvro mapToAvro(SensorEventProto event) {
-        TemperatureSensorProto _event = event.getTemperatureSensor();
+        TemperatureSensorProto _event = event.getTemperatureSensorEvent();
         return TemperatureSensorEventAvro.newBuilder()
                 .setTemperatureC(_event.getTemperatureC())
                 .setTemperatureF(_event.getTemperatureF())
@@ -24,6 +24,6 @@ public class TemperatureSensorEventHandler extends BaseSensorEventHandler<Temper
 
     @Override
     public SensorEventProto.PayloadCase getMessageType() {
-        return SensorEventProto.PayloadCase.TEMPERATURE_SENSOR;
+        return SensorEventProto.PayloadCase.TEMPERATURE_SENSOR_EVENT;
     }
 }

@@ -15,7 +15,7 @@ public class LightSensorEventHandler extends BaseSensorEventHandler<LightSensorE
 
     @Override
     protected LightSensorEventAvro mapToAvro(SensorEventProto event) {
-        LightSensorProto _event = event.getLightSensor();
+        LightSensorProto _event = event.getLightSensorEvent();
         return LightSensorEventAvro.newBuilder()
                 .setLinkQuality(_event.getLinkQuality())
                 .setLuminosity(_event.getLuminosity())
@@ -24,6 +24,6 @@ public class LightSensorEventHandler extends BaseSensorEventHandler<LightSensorE
 
     @Override
     public SensorEventProto.PayloadCase getMessageType() {
-        return SensorEventProto.PayloadCase.LIGHT_SENSOR;
+        return SensorEventProto.PayloadCase.LIGHT_SENSOR_EVENT;
     }
 }
