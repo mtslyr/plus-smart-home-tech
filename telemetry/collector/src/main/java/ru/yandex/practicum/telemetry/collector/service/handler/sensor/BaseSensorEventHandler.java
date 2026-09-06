@@ -3,23 +3,26 @@ package ru.yandex.practicum.telemetry.collector.service.handler.sensor;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.avro.specific.SpecificRecordBase;
+import ru.yandex.practicum.grpc.telemetry.event.SensorEventProto;
 import ru.yandex.practicum.telemetry.collector.kafka.KafkaEventProducer;
-import ru.yandex.practicum.telemetry.collector.model.sensor.SensorEvent;
 import ru.yandex.practicum.telemetry.collector.service.SensorEventHandler;
+
+import java.time.Instant;
 
 @Slf4j
 @RequiredArgsConstructor
 public abstract class BaseSensorEventHandler<T extends SpecificRecordBase> implements SensorEventHandler {
     private final KafkaEventProducer producer;
 
-    protected abstract T mapToAvro(SensorEvent event);
+    protected abstract T mapToAvro(SensorEventProto event);
 
     @Override
-    public void handle(SensorEvent event) {
+    public void handle(SensorEventProto event) {
         log.debug("Handle sensor event: {}", event);
+        SensorEventProto.PayloadCase type = event.getPayloadCase();
 
-        if (!event.getType().equals(getMessageType())) {
-            throw new IllegalArgumentException("Неизвестный тип события: " + event.getType());
+        if (!type.equals(getMessageType())) {
+            throw new IllegalArgumentException("Неизвестный тип события: " + event.getPayloadCase());
         }
 
         T eventAvro = mapToAvro(event);
@@ -28,10 +31,14 @@ public abstract class BaseSensorEventHandler<T extends SpecificRecordBase> imple
                 ru.yandex.practicum.kafka.telemetry.event.SensorEventAvro.newBuilder()
                         .setHubId(event.getHubId())
                         .setId(event.getId())
-                        .setTimestamp(event.getTimestamp().toEpochMilli())
+                        .setTimestamp(event.getTimestamp().getSeconds())
                         .setPayload(eventAvro)
                         .build();
 
-        producer.send(producer.sensorEventTopic(), avro, event.getHubId(), event.getTimestamp());
+        producer.send(
+                producer.sensorEventTopic(),
+                avro,
+                event.getHubId(),
+                Instant.ofEpochSecond(event.getTimestamp().getSeconds()));
     }
 }
