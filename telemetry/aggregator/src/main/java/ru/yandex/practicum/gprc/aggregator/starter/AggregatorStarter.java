@@ -117,7 +117,7 @@ public class AggregatorStarter {
     private void sendSnapshot(SensorsSnapshotAvro snapshot) throws RecordProcessException {
         ProducerRecord<String, SpecificRecordBase> record = new ProducerRecord<>(producerTopic,
                 null,
-                snapshot.getTimestamp().toEpochMilli(),
+                snapshot.getTimestamp(),
                 snapshot.getHubId(),
                 snapshot);
         try {

@@ -1,4 +1,4 @@
-package ru.yandex.parcticum.telemetry.serialization;
+package ru.yandex.practicum.telemetry.serialization;
 
 public class SensorEventDeserializer extends BaseAvroDeserializer<ru.yandex.practicum.kafka.telemetry.event.SensorEventAvro> {
 

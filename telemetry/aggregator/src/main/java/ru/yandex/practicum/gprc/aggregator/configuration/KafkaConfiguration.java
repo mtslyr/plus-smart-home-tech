@@ -10,8 +10,8 @@ import org.apache.kafka.common.serialization.StringSerializer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import ru.yandex.parcticum.telemetry.serialization.SensorsSnapshotSerializer;
-import ru.yandex.parcticum.telemetry.serialization.SensorEventDeserializer;
+import ru.yandex.practicum.telemetry.serialization.SensorsSnapshotSerializer;
+import ru.yandex.practicum.telemetry.serialization.SensorEventDeserializer;
 
 import java.util.Properties;
 
