@@ -24,7 +24,7 @@ public class AggregatorService {
         log.info("Update state for event {} with hubId: {}", event.getId(), event.getHubId());
         SensorsSnapshotAvro snapshotAvro = snapshots.getOrDefault(event.getHubId(), SensorsSnapshotAvro.newBuilder()
                 .setHubId(event.getHubId())
-                .setTimestamp(Instant.ofEpochMilli(event.getTimestamp()))
+                .setTimestamp(event.getTimestamp())
                 .setSensorsState(new HashMap<>())
                 .build());
 
@@ -32,7 +32,7 @@ public class AggregatorService {
         if (snapshotAvro.getSensorsState().containsKey(event.getId())) {
             SensorStateAvro oldState = snapshotAvro.getSensorsState().get(event.getId());
 
-            if (event.getTimestamp() < oldState.getTimestamp().toEpochMilli()
+            if (event.getTimestamp() < oldState.getTimestamp()
                     || Objects.equals(oldState.getData(), event.getPayload())) {
                 log.info("Nothing to update for eventId {}", event.getId());
                 return Optional.empty();
@@ -40,7 +40,7 @@ public class AggregatorService {
         }
 
         SensorStateAvro newState = SensorStateAvro.newBuilder()
-                .setTimestamp(Instant.ofEpochMilli(event.getTimestamp()))
+                .setTimestamp(event.getTimestamp())
                 .setData(event.getPayload())
                 .build();
 
