@@ -3,6 +3,7 @@ package ru.yandex.practicum.telemetry.analyzer.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.yandex.practicum.telemetry.analyzer.model.Action;
 import ru.yandex.practicum.telemetry.analyzer.model.Condition;
 import ru.yandex.practicum.telemetry.analyzer.model.Scenario;
@@ -30,28 +31,33 @@ public class ScenarioService {
     private final ActionRepository actionRepository;
 
     @Cacheable(value = "scenarios", key = "#hubId")
+    @Transactional(readOnly = true)
     public List<Scenario> findByHubId(String hubId) {
         return scenarioRepository.findByHubId(hubId);
     }
 
+    @Transactional(readOnly = true)
     public Map<Long, List<ScenarioCondition>> findConditionsByScenarioIds(Collection<Long> scenarioIds) {
         return scenarioConditionRepository.findByScenarioIdIn(scenarioIds)
                 .stream()
                 .collect(Collectors.groupingBy(c -> c.getScenarioId()));
     }
 
+    @Transactional(readOnly = true)
     public Map<Long, List<ScenarioAction>> findActionsByScenarioIds(Collection<Long> scenarioIds) {
         return scenarioActionRepository.findByScenarioIdIn(scenarioIds)
                 .stream()
                 .collect(Collectors.groupingBy(a -> a.getScenarioId()));
     }
 
+    @Transactional(readOnly = true)
     public Map<Long, Condition> findConditionsByIds(Collection<Long> ids) {
         return conditionRepository.findAllById(ids)
                 .stream()
                 .collect(Collectors.toMap(Condition::getId, c -> c));
     }
 
+    @Transactional(readOnly = true)
     public Map<Long, Action> findActionsByIds(Collection<Long> ids) {
         return actionRepository.findAllById(ids)
                 .stream()

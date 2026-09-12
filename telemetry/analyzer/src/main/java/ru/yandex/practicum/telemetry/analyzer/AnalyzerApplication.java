@@ -25,9 +25,7 @@ public class AnalyzerApplication {
         hubEventProcessorThread.setName("HubEventProcessorThread");
         hubEventProcessorThread.start();
 
-        Thread snapshotProcessorThread = new Thread(snapshotProcessor);
-        snapshotProcessorThread.setName("SnapshotProcessorThread");
-        snapshotProcessorThread.start();
+        snapshotProcessor.run();
 
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {
             hubEventProcessor.shutdown();
@@ -35,7 +33,7 @@ public class AnalyzerApplication {
 
             try {
                 hubEventProcessorThread.join(5000);
-                snapshotProcessorThread.join(5000);
+                Thread.currentThread().join(5000);
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
             }
