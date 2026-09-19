@@ -1,3 +1,6 @@
+grpc:
+  server:
+    port: 59091
 spring:
   kafka:
       bootstrap-servers: localhost:9092
@@ -6,4 +9,4 @@ spring:
         sensor-events: telemetry.sensors.v1
       producer:
           key-serializer: org.apache.kafka.common.serialization.StringSerializer
-          value-serializer: ru.yandex.parcticum.telemetry.serialization.KafkaAvroSerializer
+          value-serializer: ru.yandex.practicum.telemetry.serialization.KafkaAvroSerializer
