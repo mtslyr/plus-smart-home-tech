@@ -3,6 +3,7 @@ package ru.yandex.practicum.telemetry.collector.configuration;
 import org.apache.avro.specific.SpecificRecordBase;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.ProducerConfig;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -10,17 +11,16 @@ import java.util.Properties;
 
 @Configuration
 public class KafkaConfig {
-    
-    @Bean
-    public KafkaProducer<String, SpecificRecordBase> kafkaProducer(KafkaConfigurationProperties config) {
-        return new KafkaProducer<>(producerProperties(config));
-    }
 
-    private Properties producerProperties(KafkaConfigurationProperties config) {
+    @Bean
+    public KafkaProducer<String, SpecificRecordBase> kafkaProducer(
+            @Value("${spring.kafka.bootstrap-servers}") String bootstrapServers,
+            @Value("${spring.kafka.producer.key-serializer}") String keySerializer,
+            @Value("${spring.kafka.producer.value-serializer}") String valueSerializer) {
         Properties props = new Properties();
-        props.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, config.getBootstrapServers());
-        props.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, config.getProducer().getKeySerializer());
-        props.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, config.getProducer().getValueSerializer());
-        return props;
+        props.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
+        props.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, keySerializer);
+        props.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, valueSerializer);
+        return new KafkaProducer<>(props);
     }
 }
