@@ -14,7 +14,7 @@
 
     <modules>
         <module>config-server</module>
-        <module>descovery-server</module>
+        <module>discovery-server</module>
     </modules>
 
 </project>
