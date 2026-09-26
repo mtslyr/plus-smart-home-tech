@@ -33,7 +33,7 @@ public class InventoryService {
 
     @Transactional
     public InventoryDto create(UpdateInventoryRequest request) {
-        if (inventoryRepository.findByProductId(request.productId()).isPresent()) {
+        if (inventoryRepository.existsByProductId(request.productId())) {
             throw new IllegalArgumentException(
                     "Складская запись для товара с productId=" + request.productId() + " уже существует");
         }
