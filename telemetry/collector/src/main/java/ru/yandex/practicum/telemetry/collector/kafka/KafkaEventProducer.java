@@ -1,15 +1,13 @@
 package ru.yandex.practicum.telemetry.collector.kafka;
 
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.avro.specific.SpecificRecordBase;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.kafka.clients.producer.RecordMetadata;
 import org.apache.kafka.common.KafkaException;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-import ru.yandex.practicum.telemetry.collector.configuration.KafkaConfigurationProperties;
 
 import java.time.Duration;
 import java.time.Instant;
@@ -18,10 +16,19 @@ import java.util.concurrent.Future;
 
 @Slf4j
 @Component
-@RequiredArgsConstructor
 public class KafkaEventProducer implements AutoCloseable {
-    private final KafkaConfigurationProperties config;
     private final KafkaProducer<String, SpecificRecordBase> producer;
+    private final String hubEventsTopic;
+    private final String sensorEventsTopic;
+
+    public KafkaEventProducer(
+            KafkaProducer<String, SpecificRecordBase> producer,
+            @Value("${spring.kafka.topic.hub-events}") String hubEventsTopic,
+            @Value("${spring.kafka.topic.sensor-events}") String sensorEventsTopic) {
+        this.producer = producer;
+        this.hubEventsTopic = hubEventsTopic;
+        this.sensorEventsTopic = sensorEventsTopic;
+    }
 
     public void send(String topic, SpecificRecordBase event, String hubId, Instant timestamp) {
         ProducerRecord<String, SpecificRecordBase> record = new ProducerRecord<>(
@@ -49,9 +56,9 @@ public class KafkaEventProducer implements AutoCloseable {
         }
     }
 
-    public String hubEventTopic() {return config.getTopic().getHubEvents();}
+    public String hubEventTopic() {return hubEventsTopic;}
 
-    public String sensorEventTopic() {return config.getTopic().getSensorEvents();}
+    public String sensorEventTopic() {return sensorEventsTopic;}
 
     @Override
     public void close() {

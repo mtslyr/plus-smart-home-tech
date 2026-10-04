@@ -1,0 +1,14 @@
+spring:
+  kafka:
+    consumer:
+      group-id: aggregator-group
+      client-id: aggregator-client
+      enable-auto-commit: false
+      topic: telemetry.sensors.v1
+    producer:
+      topic: telemetry.snapshots.v1
+
+aggregator:
+  kafka:
+    consumer:
+      poll-timeout: 100ms

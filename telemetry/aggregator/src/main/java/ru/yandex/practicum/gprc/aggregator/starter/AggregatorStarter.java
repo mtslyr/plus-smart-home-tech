@@ -1,7 +1,6 @@
 package ru.yandex.practicum.gprc.aggregator.starter;
 
 import jakarta.annotation.PostConstruct;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.avro.specific.SpecificRecordBase;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
@@ -12,18 +11,14 @@ import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.kafka.clients.producer.RecordMetadata;
 import org.apache.kafka.common.TopicPartition;
 import org.apache.kafka.common.errors.WakeupException;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-import ru.yandex.practicum.gprc.aggregator.configuration.KafkaConfigurationProperties;
 import ru.yandex.practicum.gprc.aggregator.exception.RecordProcessException;
 import ru.yandex.practicum.gprc.aggregator.service.AggregatorService;
 import ru.yandex.practicum.kafka.telemetry.event.SensorEventAvro;
 import ru.yandex.practicum.kafka.telemetry.event.SensorsSnapshotAvro;
 
 import java.time.Duration;
-import java.time.Instant;
-import java.time.LocalDateTime;
-import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Optional;
@@ -31,21 +26,31 @@ import java.util.concurrent.Future;
 
 @Slf4j
 @Component
-@RequiredArgsConstructor
 public class AggregatorStarter {
     private static final Duration POLL_INTERVAL = Duration.ofSeconds(3);
     public static final DateTimeFormatter FORMATTER = DateTimeFormatter.ISO_OFFSET_DATE_TIME;
 
     private final AggregatorService aggregatorService;
-    private final KafkaConfigurationProperties kafkaConfig;
     private final KafkaConsumer<String, SpecificRecordBase> consumer;
     private final KafkaProducer<String, SpecificRecordBase> producer;
-    private String producerTopic;
+    private final String consumerTopic;
+    private final String producerTopic;
+
+    public AggregatorStarter(AggregatorService aggregatorService,
+                              KafkaConsumer<String, SpecificRecordBase> consumer,
+                              KafkaProducer<String, SpecificRecordBase> producer,
+                              @Value("${spring.kafka.consumer.topic}") String consumerTopic,
+                              @Value("${spring.kafka.producer.topic}") String producerTopic) {
+        this.aggregatorService = aggregatorService;
+        this.consumer = consumer;
+        this.producer = producer;
+        this.consumerTopic = consumerTopic;
+        this.producerTopic = producerTopic;
+    }
 
     @PostConstruct
     public void postConstruct() {
-        this.producerTopic = kafkaConfig.getProducer().getTopic();
-        consumer.subscribe(List.of(kafkaConfig.getConsumer().getTopic()));
+        consumer.subscribe(List.of(consumerTopic));
     }
 
     public void start() {
@@ -83,7 +88,7 @@ public class AggregatorStarter {
                 }
             }
         } catch (WakeupException ignore) {
-            log.info("Catch WakeupException: {}", ignore.getCause().getMessage());
+            log.info("Consumer poll loop woken up for shutdown");
         } finally {
             try {
                 consumer.commitSync();

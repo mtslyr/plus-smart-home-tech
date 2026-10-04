@@ -1,0 +1,31 @@
+spring:
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://localhost:5432/telemetry_analyzer
+    username: dbuser
+    password: 12345
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+  kafka:
+    consumer:
+      enable-auto-commit: false
+      snapshots:
+        group-id: analyzer-snapshots-group
+        client-id: analyzer-snapshots-consumer
+        topic: telemetry.snapshots.v1
+      hub-events:
+        group-id: analyzer-hub-events-group
+        client-id: analyzer-hub-events-consumer
+        topic: telemetry.hubs.v1
+
+grpc:
+  client:
+    hub-router:
+      address: 'discovery:///hub-router'
+      enableKeepAlive: true
+      keepAliveWithoutCalls: true
+      negotiationType: plaintext
