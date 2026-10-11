@@ -3,9 +3,9 @@ package ru.yandex.practicum.order.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ru.yandex.practicum.order.dto.CreateOrderRequest;
+import ru.yandex.practicum.order.dto.OrderData;
 import ru.yandex.practicum.order.dto.OrderDto;
-import ru.yandex.practicum.order.dto.OrderItemRequest;
+import ru.yandex.practicum.order.dto.OrderItemDto;
 import ru.yandex.practicum.order.entity.Order;
 import ru.yandex.practicum.order.entity.OrderItem;
 import ru.yandex.practicum.order.exception.NotFoundException;
@@ -40,26 +40,26 @@ public class OrderService {
     }
 
     @Transactional
-    public OrderDto create(CreateOrderRequest request) {
+    public OrderDto create(OrderData orderData) {
         Order order = Order.builder()
-                .customerName(request.customerName())
-                .customerEmail(request.customerEmail())
+                .customerName(orderData.customerName())
+                .customerEmail(orderData.customerEmail())
                 .status(CREATED_STATUS)
                 .createdAt(LocalDateTime.now())
                 .totalPrice(BigDecimal.ZERO)
                 .build();
 
         BigDecimal total = BigDecimal.ZERO;
-        for (OrderItemRequest itemRequest : request.items()) {
+        for (OrderItemDto orderItemDto : orderData.items()) {
             OrderItem item = OrderItem.builder()
                     .order(order)
-                    .productId(itemRequest.productId())
-                    .productName(itemRequest.productName())
-                    .quantity(itemRequest.quantity())
-                    .price(itemRequest.price())
+                    .productId(orderItemDto.productId())
+                    .productName(orderItemDto.productName())
+                    .quantity(orderItemDto.quantity())
+                    .price(orderItemDto.price())
                     .build();
             order.getItems().add(item);
-            total = total.add(itemRequest.price().multiply(BigDecimal.valueOf(itemRequest.quantity())));
+            total = total.add(orderItemDto.price().multiply(BigDecimal.valueOf(orderItemDto.quantity())));
         }
         order.setTotalPrice(total);
 
