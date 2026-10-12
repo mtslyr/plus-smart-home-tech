@@ -74,8 +74,8 @@ class OrderServiceAcceptanceTest {
                 .as("Созданный заказ должен содержать поле id")
                 .isNotNull();
         assertThat(created.get("status"))
-                .as("На текущем этапе новый заказ должен сохраняться в статусе CREATED")
-                .isEqualTo("CREATED");
+                .as("Заказ, успешно проверенный product-service и inventory-service, должен быть CONFIRMED")
+                .isEqualTo("CONFIRMED");
         assertThat(asDecimal(created.get("totalPrice")))
                 .as("order-service должен сам рассчитывать totalPrice по снимку товаров из product-service")
                 .isEqualByComparingTo("8270.00");

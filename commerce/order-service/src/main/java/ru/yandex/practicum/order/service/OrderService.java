@@ -20,8 +20,6 @@ import java.util.List;
 @RequiredArgsConstructor
 public class OrderService {
 
-    private static final String CREATED_STATUS = "CREATED";
-
     private final OrderRepository orderRepository;
 
     @Transactional(readOnly = true)
@@ -44,11 +42,12 @@ public class OrderService {
         Order order = Order.builder()
                 .customerName(orderData.customerName())
                 .customerEmail(orderData.customerEmail())
-                .status(CREATED_STATUS)
+                .status(orderData.status().name())
+                .statusDetails(orderData.statusDetails())
                 .createdAt(LocalDateTime.now())
-                .totalPrice(BigDecimal.ZERO)
                 .build();
 
+        // Если цена хотя бы одной позиции неизвестна (каталог недоступен), итог не считаем
         BigDecimal total = BigDecimal.ZERO;
         for (OrderItemDto orderItemDto : orderData.items()) {
             OrderItem item = OrderItem.builder()
@@ -59,7 +58,9 @@ public class OrderService {
                     .price(orderItemDto.price())
                     .build();
             order.getItems().add(item);
-            total = total.add(orderItemDto.price().multiply(BigDecimal.valueOf(orderItemDto.quantity())));
+            total = total == null || orderItemDto.price() == null
+                    ? null
+                    : total.add(orderItemDto.price().multiply(BigDecimal.valueOf(orderItemDto.quantity())));
         }
         order.setTotalPrice(total);
 
