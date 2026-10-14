@@ -22,7 +22,7 @@ spring:
           default:
             connectTimeout: 2000
             readTimeout: 3000
-            loggerLevel: basic
+            loggerLevel: full
 
 resilience4j:
   circuitbreaker:
@@ -36,6 +36,10 @@ resilience4j:
     configs:
       default:
         timeout-duration: 3s
+
+eureka:
+  instance:
+    instance-id: ${spring.application.name}:${random.value}
 
 logging:
   level:

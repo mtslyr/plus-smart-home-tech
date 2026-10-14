@@ -1,6 +1,7 @@
 package ru.yandex.practicum.inventory.service;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.yandex.practicum.inventory.dto.InventoryDto;
@@ -17,6 +18,7 @@ import ru.yandex.practicum.inventory.repository.InventoryRepository;
 
 import java.util.List;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class InventoryService {
@@ -56,6 +58,7 @@ public class InventoryService {
 
     @Transactional
     public ReserveResponse reserve(ReserveRequest request) {
+        log.info("Processing reserve: {}", request);
         Inventory inventory = getEntity(request.productId());
         int available = inventory.getQuantity() - inventory.getReservedQuantity();
         if (available < request.quantity()) {
@@ -69,6 +72,7 @@ public class InventoryService {
 
     @Transactional
     public ReleaseResponse release(ReleaseRequest request) {
+        log.info("Processing release: {}", request);
         Inventory inventory = getEntity(request.productId());
         if (inventory.getReservedQuantity() < request.quantity()) {
             throw new IllegalArgumentException(
