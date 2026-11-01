@@ -40,12 +40,10 @@ public class OrderItem {
     @Column(nullable = false)
     Long productId;
 
-    @Column(nullable = false)
     String productName;
 
     @Column(nullable = false)
     Integer quantity;
 
-    @Column(nullable = false)
     BigDecimal price;
 }

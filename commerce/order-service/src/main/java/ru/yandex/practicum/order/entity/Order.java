@@ -44,7 +44,6 @@ public class Order {
     @Column(nullable = false)
     String status;
 
-    @Column(nullable = false)
     BigDecimal totalPrice;
 
     String statusDetails;
